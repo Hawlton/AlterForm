@@ -1,3 +1,13 @@
+@font-face {
+    font-family: 'alterfont-large';
+    src: url('/Fonts/Audiowide-Regular.ttf') format('truetype');
+    font-style: normal;
+}
+
+h1, h2, h3, h4 {
+    font-family: 'alterfont-large';
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }
@@ -57,4 +67,15 @@ h1:focus {
 
 .form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
     text-align: start;
+}
+
+.header-segment {
+    width: 53% !important;
+    display: inline-flex !important;
+    justify-content: space-between !important;
+}
+
+.home-page-top {
+    display: inline-flex;
+    justify-content: space-around;
 }
