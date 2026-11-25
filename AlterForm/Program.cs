@@ -1,5 +1,9 @@
-using AlterForm.Client.Pages;
+using AlterForm;
 using AlterForm.Components;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Authentication;
 using Radzen;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -7,10 +11,15 @@ var builder = WebApplication.CreateBuilder(args);
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents()
-    .AddInteractiveWebAssemblyComponents();
+    .AddInteractiveWebAssemblyComponents()
+    .AddAuthenticationStateSerialization();
+builder.Services.AddCascadingAuthenticationState();
+
+
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddControllers();
+builder.Services.AddDbContextFactory<AlterDB>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AlterString")));
 
 
 var app = builder.Build();
@@ -27,6 +36,7 @@ app.UseHttpsRedirection();
 
 app.MapStaticAssets();
 app.MapControllers();
+app.UseAntiforgery();
 app.MapRazorComponents<App>()
     .AddInteractiveServerRenderMode()
     .AddInteractiveWebAssemblyRenderMode()
