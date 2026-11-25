@@ -8,6 +8,10 @@ h1, h2, h3, h4 {
     font-family: 'alterfont-large';
 }
 
+.af-button  {
+    color: white !important;
+}
+
 html, body {
     font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
 }

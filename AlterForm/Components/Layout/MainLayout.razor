@@ -1,4 +1,5 @@
 ﻿@using AlterForm.Client.Pages.Islands
+@using Microsoft.AspNetCore.Components.Authorization
 @inherits LayoutComponentBase
 
 
@@ -10,7 +11,25 @@
                 <MainMenu></MainMenu>
                 <h3>AlterForm</h3>
             </div>
-            <RadzenLabel Text="ProfileMenu"></RadzenLabel>
+            <AuthorizeView>
+                <Authorized>
+                    <RadzenProfileMenu>
+                        <Template>
+                            <img src="favicon.png" />
+                        </Template>
+                        <ChildContent>
+                            <RadzenProfileMenuItem Text="My Gallery" Icon="art_track"></RadzenProfileMenuItem>
+                            <RadzenProfileMenuItem Text="Account Settings" Icon="settings"></RadzenProfileMenuItem>
+                        </ChildContent>
+                    </RadzenProfileMenu>
+                </Authorized>
+                <NotAuthorized>
+                    <div>
+                        <a href="login" class="rz-ripple rz-button" style="color: white !important; padding: 5px">Login</a>
+                        <a href="create_account" class="rz-button rz-ripple" style="color: white !important; padding: 5px;">Create Account</a>
+                    </div>
+                </NotAuthorized>
+            </AuthorizeView>
         </RadzenStack>
     </RadzenHeader>
     <RadzenBody>

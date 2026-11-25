@@ -11,7 +11,7 @@
   <ItemGroup>
     <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="11.0.0" />
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="11.0.0" />
-    <PackageReference Include="Radzen.Blazor" Version="13.2.1" />
+    <PackageReference Include="Radzen.Blazor" Version="13.3.0" />
     <ProjectReference Include="..\AlterForm.Client\AlterForm.Client.csproj" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.Server" Version="11.0.0" />
   </ItemGroup>
