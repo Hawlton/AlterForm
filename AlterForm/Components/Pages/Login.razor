@@ -1,0 +1,64 @@
+@page "/login"
+@using System.ComponentModel
+@using System.ComponentModel.DataAnnotations
+@using System.Security.Authentication
+@using Microsoft.AspNetCore.Identity
+@inject SignInManager<AlterUser> signin_mgr
+@inject UserManager<AlterUser> user_mgr
+@inject NavigationManager nav
+
+<PageTitle>AlterForm Login</PageTitle>
+
+<h3>Sign In</h3>
+
+<RadzenCard Style="max-width: 450px; height: 180px">
+    <EditForm Model="signin_form" FormName="signin_form" OnValidSubmit="attempt_signin">
+        <DataAnnotationsValidator />
+        <div class="row-container" >
+            <label for="identifier">Username | Email:</label>
+            <InputText @bind-Value="signin_form.identifier" class="rz-textbox" id="identifier"></InputText>
+        </div>
+        <div class="row-container">
+            <label for="pw">Password: </label>
+            <InputText @bind-Value="signin_form.pw" class="rz-textbox" type="password" id="pw"></InputText>
+        </div>
+        <div class="row-container" style="justify-content: flex-end !important;">
+            <label for="remember_me">Remember Me: </label>
+            <InputCheckbox @bind-Value="signin_form.remember_me" id="remember_me" style="margin-left: 4px;"></InputCheckbox>
+        </div>
+        <button type="submit" class="rz-button rz-rddkipple" style="float: right; margin-top: 6px">Login</button>
+        <ValidationSummary />
+    </EditForm>
+</RadzenCard>
+
+
+@code {
+    [SupplyParameterFromForm] public AlterSignIn signin_form {get;set;} = default!;
+
+    protected override void OnInitialized() => signin_form ??= new();
+    public string status = String.Empty;
+
+    public async Task attempt_signin()
+    {
+        try
+        {
+            var usr = await user_mgr.FindByNameAsync(signin_form.identifier) ?? await user_mgr.FindByEmailAsync(signin_form.identifier);
+            if(usr == null) throw new InvalidCredentialException("Invalid Credentials supplied (identifier)");
+            var result = await signin_mgr.PasswordSignInAsync(usr, signin_form.pw, signin_form.remember_me, false);
+            if(!result.Succeeded) throw new InvalidCredentialException("Invalid credentials supplied (password)");
+            else nav.NavigateTo("/", forceLoad: true);
+
+        } catch(Exception ex)
+        {
+            Console.WriteLine($"[DEVELOPMENT ERROR] {ex.Message}");
+        }
+
+    }
+
+    public sealed class AlterSignIn
+    {
+        [Required] public string identifier {get;set;}
+        [Required] [PasswordPropertyText] public string pw {get;set;}
+        public bool remember_me {get;set;} = false;
+    }
+}

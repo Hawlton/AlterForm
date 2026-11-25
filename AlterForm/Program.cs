@@ -30,10 +30,11 @@ builder.Services.AddIdentityCore<AlterUser>(options => options.SignIn.RequireCon
 
 builder.Services.AddRadzenComponents();
 builder.Services.AddControllers();
-builder.Services.AddDbContextFactory<AlterDB>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AlterString")));
+builder.Services.AddDbContextFactory<AlterDB>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AlterString")).UseSnakeCaseNamingConvention());
 
 
 var app = builder.Build();
+await IdentitySeeder.SeedAsync(app);
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
