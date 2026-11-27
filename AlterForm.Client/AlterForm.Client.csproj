@@ -15,4 +15,8 @@
     <PackageReference Include="Radzen.Blazor" Version="13.3.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\AlterForm.Shared\AlterForm.Shared.csproj" />
+  </ItemGroup>
+
 </Project>

@@ -1,0 +1,116 @@
+@page "/create_account"
+@using System.ComponentModel.DataAnnotations
+@using Microsoft.AspNetCore.Identity
+@inject NavigationManager nav
+@inject UserManager<AlterUser> user_manager
+
+<PageTitle>Create Account</PageTitle>
+<h3>Create Account</h3>
+
+<RadzenCard Style="max-width: 450px">
+    <EditForm Model="account_form" FormName="account_form" OnValidSubmit="attempt_create">
+        <DataAnnotationsValidator />
+        <div class="row-container">
+            <label for="user_name">Username</label>
+            <InputText @bind-Value="account_form.user_name" class="rz-textbox" id="user_name"></InputText>
+        </div>
+        <div class="row-container">
+            <label for="email">Email</label>
+            <InputText @bind-Value="account_form.email" class="rz-textbox" id="email"></InputText>
+        </div>
+        <div class="row-container">
+            <label for="species">Species</label>
+            <InputText @bind-Value="account_form.species" class="rz-textbox" id="species"></InputText>
+        </div>
+        <div class="row-container">
+            <label for="maturity_rating">Maturity Ceiling</label>
+            <InputSelect @bind-Value="account_form.maturity_rating" class="rz-textbox" id="maturity-rating">
+                @foreach(var rating in Enum.GetValues<MaturityRating>())
+                {
+                    <option value="@rating">@rating</option>
+                }
+            </InputSelect>
+        </div>
+        <div class="row-container">
+            <label for="pw">Password</label>
+            <InputText @bind-Value="account_form.pw" class="rz-textbox" id="pw" type="password"></InputText>
+        </div>
+        <div class="row-container">
+            <label for="pw_cofirm">Confirm Password</label>
+            <InputText @bind-Value="account_form.pw_confirm" class="rz-textbox" id="pw_confirm" type="password"></InputText>
+        </div>
+        <div class="row-container" style="justify-content: flex-end !important;">
+            <label for="tos_agreed">I have read and agree to the TOS</label>
+            <InputCheckbox @bind-Value="account_form.tos_agreed" id="tos_agreed" style="margin-left: 5px;"></InputCheckbox>
+        </div>
+        <br />
+        <button type="submit" class="rz-button rz-ripple af-button">Create Account</button>
+        <ValidationSummary />
+    </EditForm>
+    <hr />
+    <RadzenLink Text="Alterform Instance TOS" Path="instance_tos" Icon="contract"></RadzenLink>
+</RadzenCard>
+
+@if (status.Count > 0)
+{
+    <RadzenCard class="af-form-card">
+        <h4>Error</h4>
+        <ul>
+            @foreach(var err in status)
+            {
+                <li>@err</li>
+            }
+        </ul>
+    </RadzenCard>
+}
+
+@code {
+    [SupplyParameterFromForm] public AccountForm account_form {get;set;} = default!;
+    [CascadingParameter] private HttpContext? context {get;set;}
+    public bool loading = false;
+    public List<string> status = new();
+
+    protected override void OnInitialized()
+    {
+        account_form ??= new();
+        if(context?.User.Identity?.IsAuthenticated == true) nav.NavigateTo("/");
+    }
+
+    public async Task attempt_create()
+    {
+        status.Clear();
+        Console.WriteLine("Creating New User");
+        if(loading) return;
+        loading = true;
+        if(await user_manager.FindByNameAsync(account_form.user_name) != null)
+        {
+            status.Add($"Username: {account_form.user_name} is taken");
+        }
+        var new_user = new AlterUser()
+        {
+            UserName = account_form.user_name,
+            Email = account_form.email,
+            current_species = account_form.species,
+            maturity_ceiling = account_form.maturity_rating,
+        };
+        Console.WriteLine($"Adding new user: {new_user.UserName}");
+        var result = await user_manager.CreateAsync(new_user, account_form.pw ?? throw new InvalidOperationException("pw cannot be null"));
+        if(!result.Succeeded) status = result.Errors.Select(e => e.Description).ToList();
+        else nav.NavigateTo(nav.BaseUri);
+        status.ForEach(s => Console.WriteLine(s));
+        loading = false;
+
+    }
+
+
+    public sealed class AccountForm
+    {
+        [Required] [RegularExpression("^[A-Za-z0-9]+$")] [StringLength(32, MinimumLength = 3)] public string? user_name {get;set;}
+        [Required] [EmailAddress] public string? email {get;set;}
+        [Required] [RegularExpression("^[A-Za-z0-9]+$")] [StringLength(32, MinimumLength = 3)] public string? species {get;set;}
+        [Required] [DataType(DataType.Password)] [StringLength(32, MinimumLength = 10)] public string? pw {get;set;}
+        [Required] [DataType(DataType.Password)] [Compare(nameof(pw))] public string? pw_confirm {get;set;}
+        [Required] [Range(typeof(bool), "true", "true")] public bool tos_agreed {get;set;} = false;
+        public MaturityRating maturity_rating {get;set;} = MaturityRating.General;
+    }
+}

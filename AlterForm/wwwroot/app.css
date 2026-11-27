@@ -10,6 +10,7 @@ h1, h2, h3, h4 {
 
 .af-button  {
     color: white !important;
+    padding: 3px !important;
 }
 
 html, body {
@@ -82,6 +83,11 @@ h1:focus {
 .home-page-top {
     display: inline-flex;
     justify-content: space-around;
+}
+
+.af-form-card {
+    max-width: 450px;
+    height: 185px;
 }
 
 .row-container {

@@ -27,3 +27,28 @@ ApiController, HttpClient, and a user class that inherits from IdentityUser. DbC
 # Deploying AlterForm
 TODO: create a `DOCKERFILE` and an example `docker-compose.yml` so end user doesn't have to deal with PostgreSQL directly.
 Docker is probably going to be the ideal way to host this.
+
+## For Now 
+### Linux 
+ 1. Install PostgreSQL ideally on the same server you want to host AlterForm on.
+ 2. Configure the `pg_hba.conf` and `postgresql.conf` files to allow connections from your server
+ 3. Create a dedicated postgresql user for alterform with psql.
+ 4. Create a database in postgresql named whatever you want. (remember these for your connection string)
+ 5. Assign ownership of that database to the user you created in step 3.
+ 6. Install latest dotnet 11 sdk + dotnet ef (`dotnet tool install --global dotnet-ef`)
+ 7. Inside the repo root run the following commands
+  - `dotnet restore`
+  - `dotnet package update`
+  - `dotnet user-secrets set "ConnectionStrings:ConnectionStringName" "Host=localhost;Port=5432;UserID=PGUSER;Password=PGPASSWORD;Database=alterform"`
+  - `dotnet user-secrets set "AlterAdmin:Email" "(Your Email)"`
+  - `dotnet user-secrets set "AlterAdmin:Password" "(Your Password)"`
+  - `dotnet ef database update` 
+  - `dotnet publish -c Release -r linux-x64 --self-contained`
+ 8. Copy the contents of `~/bin/Release/net11.0/linux-x64/publish` to wherever your prod folder is
+ 9. (recommended) create a dedicated service account with scoped permissions to run AlterForm as a systemd service or docker container.
+
+### Linux Tips
+ - Use a reverse proxy like nginx and keep the port bound to something like 7000
+ - Don't forget to `chmod +x` , configure selinux and all that fun stuff
+
+ 
