@@ -82,9 +82,11 @@
         Console.WriteLine("Creating New User");
         if(loading) return;
         loading = true;
-        if(await user_manager.FindByNameAsync(account_form.user_name) != null)
+        if(await user_manager.FindByNameAsync(account_form.user_name) != null || await user_manager.FindByEmailAsync(account_form.email) != null)
         {
-            status.Add($"Username: {account_form.user_name} is taken");
+            status.Add("username or email is taken");
+            loading = false;
+            return;
         }
         var new_user = new AlterUser()
         {
@@ -97,9 +99,7 @@
         var result = await user_manager.CreateAsync(new_user, account_form.pw ?? throw new InvalidOperationException("pw cannot be null"));
         if(!result.Succeeded) status = result.Errors.Select(e => e.Description).ToList();
         else nav.NavigateTo(nav.BaseUri);
-        status.ForEach(s => Console.WriteLine(s));
         loading = false;
-
     }
 
 
