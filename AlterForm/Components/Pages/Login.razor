@@ -45,7 +45,7 @@
 
     public async Task attempt_signin()
     {
-        if(loading) return;
+        if(loading || String.IsNullOrEmpty(signin_form.identifier) || String.IsNullOrEmpty(signin_form.pw)) return;
         loading = true;
         try
         {

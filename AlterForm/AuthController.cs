@@ -18,6 +18,7 @@ public class AuthController : ControllerBase // Or Controller. I forget which on
     }
 
     [Authorize]
+    [ValidateAntiForgeryToken] //Not sure if this is done automatically by ApiController or not
     [HttpPost("logout")]
     public async Task<ActionResult> logout()
     {

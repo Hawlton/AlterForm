@@ -7,13 +7,17 @@
     <Authorized>
         <RadzenProfileMenu>
             <Template>
-                <RadzenIcon Icon="account_circle"></RadzenIcon>
-                <RadzenLabel Text="@context?.User.Identity?.Name" ></RadzenLabel>
+                <div style="display: flex;">
+                    <RadzenIcon Icon="account_circle"></RadzenIcon>
+                    <RadzenLabel Text="@context?.User.Identity?.Name" ></RadzenLabel>
+                </div>
             </Template>
             <ChildContent>
                 <RadzenProfileMenuItem Text="My Gallery" Icon="art_track"></RadzenProfileMenuItem>
                 <RadzenProfileMenuItem Text="Account Settings" Icon="settings"></RadzenProfileMenuItem>
-                <RadzenProfileMenuItem Text="Logout" Action="api/auth/logout" Method="post" Icon="logout"></RadzenProfileMenuItem>
+                <RadzenProfileMenuItem Text="Logout" Action="api/auth/logout" Method="post" Icon="logout">
+                    <AntiforgeryToken></AntiforgeryToken>
+                </RadzenProfileMenuItem>
             </ChildContent>
         </RadzenProfileMenu>
     </Authorized>

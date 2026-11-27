@@ -16,6 +16,8 @@ builder.Services.AddRazorComponents()
     .AddAuthenticationStateSerialization();
 builder.Services.AddCascadingAuthenticationState();
 
+builder.Services.AddAntiforgery();
+
 builder.Services.AddRadzenComponents();
 builder.Services.AddControllers();
 builder.Services.AddDbContextFactory<AlterDB>(options => options.UseNpgsql(builder.Configuration.GetConnectionString("AlterString")).UseSnakeCaseNamingConvention());
@@ -67,6 +69,10 @@ builder.Services.ConfigureApplicationCookie(options =>
     };
 });
 
+builder.Services.AddControllersWithViews(options =>
+{
+    options.Filters.Add(new Microsoft.AspNetCore.Mvc.ValidateAntiForgeryTokenAttribute());
+});
 
 builder.Services.AddAuthentication(options =>
 {
